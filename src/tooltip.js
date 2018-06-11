@@ -73,7 +73,7 @@ nv.models.tooltip = function() {
                 .attr("colspan", 3)
                 .append("strong")
                 .classed("x-value", true)
-                .html(headerFormatter(d.value));
+                .html(headerFormatter(d.value) + "<br>" + d.series[0].data.z + "<br>");
         }
 
         var tbodyEnter = table.selectAll("tbody")
