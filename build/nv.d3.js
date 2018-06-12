@@ -585,15 +585,44 @@ nv.models.tooltip = function() {
             var theadEnter = table.selectAll("thead")
                 .data([d])
                 .enter().append("thead");
-
+            
+            var actionColor = "";
+            var percentGain = "";
+            var percentGainNum = 0;
+            
+            if (d.series[0].data.z === "HOLD") {
+            	actionColor = "black";
+            }
+            if (d.series[0].data.z === "BUY") {
+            	actionColor = "green";
+            }
+            else {
+            	
+            	var percentAction = "";
+            	
+            	actionColor = "red";
+            	if(d.series[0].data.percent[percentGainNum] === "-") {
+            		percentAction = "Gain";
+            	}
+            	else {
+            		percentAction = "Loss";
+            	}
+            	
+            	percentGain = percentAction + ': ' + d.series[0].data.percent[percentGainNum] ;
+            	percentGainNum++;
+            }
+            
+            
+            
+            
             theadEnter.append("tr")
                 .append("td")
                 .attr("colspan", 3)
                 .append("strong")
                 .classed("x-value", true)
-                .html(headerFormatter(d.value) + "<br>" + d.series[0].data.z + "<br>");
+                .html(headerFormatter('Time: ' + d.value + '    ' + percentGain) + '<br>Action: <font color="' + actionColor + '">' 
+                		+ d.series[0].data.z + '</font><br>Close: ' + d.series[0].data.close + '<br>Indicators: ');
         }
-
         var tbodyEnter = table.selectAll("tbody")
             .data([d])
             .enter().append("tbody");
