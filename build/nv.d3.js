@@ -572,6 +572,10 @@ nv.models.tooltip = function() {
         return d;
     };
 
+    
+    // Christian added global var for tooltip
+    var percentGainNum = 0;
+    
     // By default, the tooltip model renders a beautiful table inside a DIV, returned as HTML
     // You can override this function if a custom tooltip is desired. For instance, you could directly manipulate
     // the DOM by accessing elem and returning false.
@@ -586,42 +590,12 @@ nv.models.tooltip = function() {
                 .data([d])
                 .enter().append("thead");
             
-            var actionColor = "";
-            var percentGain = "";
-            var percentGainNum = 0;
-            
-            if (d.series[0].data.z === "HOLD") {
-            	actionColor = "black";
-            }
-            if (d.series[0].data.z === "BUY") {
-            	actionColor = "green";
-            }
-            else {
-            	
-            	var percentAction = "";
-            	
-            	actionColor = "red";
-            	if(d.series[0].data.percent[percentGainNum] === "-") {
-            		percentAction = "Gain";
-            	}
-            	else {
-            		percentAction = "Loss";
-            	}
-            	
-            	percentGain = percentAction + ': ' + d.series[0].data.percent[percentGainNum] ;
-            	percentGainNum++;
-            }
-            
-            
-            
-            
             theadEnter.append("tr")
                 .append("td")
                 .attr("colspan", 3)
                 .append("strong")
                 .classed("x-value", true)
-                .html(headerFormatter('Time: ' + d.value + '    ' + percentGain) + '<br>Action: <font color="' + actionColor + '">' 
-                		+ d.series[0].data.z + '</font><br>Close: ' + d.series[0].data.close + '<br>Indicators: ');
+                .html(headerFormatter(d.value));
         }
         var tbodyEnter = table.selectAll("tbody")
             .data([d])
@@ -647,6 +621,72 @@ nv.models.tooltip = function() {
             .classed("value",true)
             .html(function(p, i) { return valueFormatter(p.value, i, p) });
 
+        trowEnter.append("td")
+        .html(function(p,i) { 
+        	
+        	var actionColor = "";
+            var percentGain = "";
+            var percentGainNum = 0;
+            
+            if (d.series[i].data.z == "HOLD") {
+            	actionColor = "black";
+            }
+            else if (d.series[i].data.z == "BUY") {
+            	actionColor = "green";
+            }
+            else {
+            	
+            	var percentAction = "";
+            	
+            	actionColor = "red";
+            	if(d.series[i].data.percent[percentGainNum] === "-") {
+            		percentAction = "Gain";
+            	}
+            	else {
+            		percentAction = "Loss";
+            	}
+            	percentGain = percentAction + ': ' + d.series[i].data.percent[percentGainNum] + '<br>';
+            	percentGainNum++;
+            	if (percentGainNum > d.series[i].data.percent.length) {
+            		percentGainNum = 0;
+            	}
+            }
+            
+            var buyKeyHolder = [];
+            var sellKeyHolder = [];
+            
+            for (var key in d.series[i].data.indicator.buyIndicators) {
+            	buyKeyHolder.push(key);
+            }
+            for (var key in d.series[i].data.indicator.sellIndicators) {
+            	sellKeyHolder.push(key);
+            }
+            
+            // var uniqueKeys = Array.from(new Set(keyHolder));
+            
+            var indicators = "";
+            
+            for (var j = 0; j < buyKeyHolder.length; j++) {
+            	if (buyKeyHolder[j] != 'class') {
+            		indicators += '<br>' + buyKeyHolder[j] + ': ' + d.series[i].data.indicator.buyIndicators[buyKeyHolder[j]];
+            	}
+            }
+            
+            for (var j = 0; j < sellKeyHolder.length; j++) {
+            	if (d.series[i].data.indicator.buyIndicators.hasOwnProperty(sellKeyHolder[j]) == false ) {
+            		indicators += '<br>' + sellKeyHolder[j] + ': ' + d.series[i].data.indicator.sellIndicators[sellKeyHolder[j]];
+            	}
+            }
+
+            var timeFormat = d.series[i].data.timestamp.substring(0,10);
+            timeFormat += " ";
+            timeFormat += d.series[i].data.timestamp.substring(11,16);
+            
+        	return percentGain + 'Time: '+ timeFormat + '<br>Action: <font color="' + actionColor + '">' 
+    		+ d.series[i].data.z + '</font><br>Close: ' + d.series[i].data.close + '<br>Indicators: ' + indicators + '<br>'});
+
+
+        
         trowEnter.filter(function (p,i) { return p.percent !== undefined }).append("td")
             .classed("percent", true)
             .html(function(p, i) { return "(" + d3.format('%')(p.percent) + ")" });
