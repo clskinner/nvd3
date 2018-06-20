@@ -623,7 +623,7 @@ nv.models.tooltip = function() {
 
         trowEnter.append("td")
         .html(function(p,i) { 
-        	if (d.series[0].graphType == "backtestGraph") {
+        	if (d.series[0].data.graphType == "backtestGraph") {
         		
         	
 	        	var actionColor = "";
@@ -686,13 +686,13 @@ nv.models.tooltip = function() {
 	        	return '<hr>Time: '+ timeFormat + '<br>Action: <font color="' + actionColor + '">' 
 	    		+ d.series[i].data.z + '</font><br>' + percentGain + 'Close: ' + d.series[i].data.close + indicators;
     		}
-        	else if (d.series[0].graphType == "botManagerGraph") {
+        	else if (d.series[0].data.graphType == "botManagerGraph") {
         		
         		var timeFormat = d.series[i].data.timestamp.substring(0,10);
 	            timeFormat += " ";
 	            timeFormat += d.series[i].data.timestamp.substring(11,16);
 	            
-	            return '<hr>Time: ' + timeFormat + '<br>Open: ' + d.series[i].data.open + '<br>Close: ' + d.series[i].data.close + '<br>High: ' + d.series[i].data.high + 
+	            return '<hr>Time: ' + timeFormat + '<br>Open: ' + d.series[i].data.open + '<br>Close: ' + d.series[i].data.y + '<br>High: ' + d.series[i].data.high + 
 	            		'<br>Low: ' + d.series[i].data.low + '<br>Volume: ' + d.series[i].data.volume;
         	}
         });
