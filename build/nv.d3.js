@@ -623,69 +623,81 @@ nv.models.tooltip = function() {
 
         trowEnter.append("td")
         .html(function(p,i) { 
+        	if (d.series[0].graphType == "backtestGraph") {
+        		
         	
-        	var actionColor = "";
-            var percentGain = "";
-            var percentGainNum = 0;
-            
-            if (d.series[i].data.z == "HOLD") {
-            	actionColor = "black";
-            }
-            else if (d.series[i].data.z == "BUY") {
-            	actionColor = "green";
-            }
-            else {
-            	
-            	var percentAction = "";
-            	
-            	actionColor = "red";
-            	if(d.series[i].data.percent[percentGainNum] === "-") {
-            		percentAction = "Gain";
-            	}
-            	else {
-            		percentAction = "Loss";
-            	}
-            	percentGain = percentAction + ': ' + d.series[i].data.percent[percentGainNum] + '<br>';
-            	percentGainNum++;
-            	if (percentGainNum > d.series[i].data.percent.length) {
-            		percentGainNum = 0;
-            	}
-            }
-            
-            var buyKeyHolder = [];
-            var sellKeyHolder = [];
-            
-            for (var key in d.series[i].data.indicator.buyIndicators) {
-            	buyKeyHolder.push(key);
-            }
-            for (var key in d.series[i].data.indicator.sellIndicators) {
-            	sellKeyHolder.push(key);
-            }
-            
-            // var uniqueKeys = Array.from(new Set(keyHolder));
-            
-            var indicators = "";
-            
-            for (var j = 0; j < buyKeyHolder.length; j++) {
-            	if (buyKeyHolder[j] != 'class') {
-            		indicators += '<br>' + buyKeyHolder[j] + ': ' + d.series[i].data.indicator.buyIndicators[buyKeyHolder[j]];
-            	}
-            }
-            
-            for (var j = 0; j < sellKeyHolder.length; j++) {
-            	if (d.series[i].data.indicator.buyIndicators.hasOwnProperty(sellKeyHolder[j]) == false ) {
-            		indicators += '<br>' + sellKeyHolder[j] + ': ' + d.series[i].data.indicator.sellIndicators[sellKeyHolder[j]];
-            	}
-            }
+	        	var actionColor = "";
+	            var percentGain = "";
+	            
+	            if (d.series[i].data.z == "HOLD") {
+	            	actionColor = "black";
+	            }
+	            else if (d.series[i].data.z == "BUY") {
+	            	actionColor = "green";
+	            }
+	            else {
+	            	
+	            	var percentAction = "";
+	            	
+	            	actionColor = "red";
+	            	if(d.series[i].data.percent[percentGainNum].substring(0, 1) === "-") {
+	            		percentAction = "Loss";
+	            	}
+	            	else {
+	            		percentAction = "Gain";
+	            	}
+	            	percentGain = percentAction + ': ' + d.series[i].data.percent[percentGainNum] + '<br>';
+	            	percentGainNum++;
+	            	if (percentGainNum > d.series[i].data.percent.length) {
+	            		percentGainNum = 0;
+	            	}
+	            }
+	            
+	            var buyKeyHolder = [];
+	            var sellKeyHolder = [];
+	            
+	            for (var key in d.series[i].data.indicator.buyIndicators) {
+	            	buyKeyHolder.push(key);
+	            }
+	            for (var key in d.series[i].data.indicator.sellIndicators) {
+	            	sellKeyHolder.push(key);
+	            }
+	            
+	            // var uniqueKeys = Array.from(new Set(keyHolder));
+	            
+	            var indicators = "";
+	            
+	            for (var j = 0; j < buyKeyHolder.length; j++) {
+	            	if (buyKeyHolder[j] != 'class') {
+	            		indicators += '<br>' + buyKeyHolder[j] + ': ' + d.series[i].data.indicator.buyIndicators[buyKeyHolder[j]];
+	            	}
+	            }
+	            
+	            for (var j = 0; j < sellKeyHolder.length; j++) {
+	            	if (d.series[i].data.indicator.buyIndicators.hasOwnProperty(sellKeyHolder[j]) == false ) {
+	            		indicators += '<br>' + sellKeyHolder[j] + ': ' + d.series[i].data.indicator.sellIndicators[sellKeyHolder[j]];
+	            	}
+	            }
+	
+	            var timeFormat = d.series[i].data.timestamp.substring(0,10);
+	            timeFormat += " ";
+	            timeFormat += d.series[i].data.timestamp.substring(11,16);
+	            
+	        	return '<hr>Time: '+ timeFormat + '<br>Action: <font color="' + actionColor + '">' 
+	    		+ d.series[i].data.z + '</font><br>' + percentGain + 'Close: ' + d.series[i].data.close + indicators;
+    		}
+        	else if (d.series[0].graphType == "botManagerGraph") {
+        		
+        		var timeFormat = d.series[i].data.timestamp.substring(0,10);
+	            timeFormat += " ";
+	            timeFormat += d.series[i].data.timestamp.substring(11,16);
+	            
+	            return '<hr>Time: ' + timeFormat + '<br>Open: ' + d.series[i].data.open + '<br>Close: ' + d.series[i].data.close + '<br>High: ' + d.series[i].data.high + 
+	            		'<br>Low: ' + d.series[i].data.low + '<br>Volume: ' + d.series[i].data.volume;
+        	}
+        });
 
-            var timeFormat = d.series[i].data.timestamp.substring(0,10);
-            timeFormat += " ";
-            timeFormat += d.series[i].data.timestamp.substring(11,16);
-            
-        	return percentGain + 'Time: '+ timeFormat + '<br>Action: <font color="' + actionColor + '">' 
-    		+ d.series[i].data.z + '</font><br>Close: ' + d.series[i].data.close + '<br>Indicators: ' + indicators + '<br>'});
-
-
+        
         
         trowEnter.filter(function (p,i) { return p.percent !== undefined }).append("td")
             .classed("percent", true)
