@@ -695,6 +695,15 @@ nv.models.tooltip = function() {
 	            return '<hr>Time: ' + timeFormat + '<br>Open: ' + d.series[i].data.open + '<br>Close: ' + d.series[i].data.y + '<br>High: ' + d.series[i].data.high + 
 	            		'<br>Low: ' + d.series[i].data.low + '<br>Volume: ' + d.series[i].data.volume;
         	}
+        	else if (d.series[0].data.graphType == "dashboardGraph") {
+        		
+        		var timeFormat = d.series[i].data.timestamp.substring(0,10);
+	            timeFormat += " ";
+	            timeFormat += d.series[i].data.timestamp.substring(11,16);
+	            
+	            return '<hr>Time: ' + timeFormat + '<br>Open: ' + d.series[i].data.open + '<br>Close: ' + d.series[i].data.y + '<br>High: ' + d.series[i].data.high + 
+	            		'<br>Low: ' + d.series[i].data.low + '<br>Volume: ' + d.series[i].data.volume;
+        	}
         });
 
         
